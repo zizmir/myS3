@@ -10,14 +10,14 @@ passport.use(
       try {
         const user = await User.findOne({ where: { nickname } });
         if (!user) {
-          done('invalid nickname');
+          return done('invalid nickname');
         }
-        if (!(await user.checkPwd(password))) {
-          done('wrong password');
+        if (!(await user.checkPassword(password))) {
+          return done('wrong password');
         }
         done(false, user);
       } catch (err) {
-        done(`${err.messages}`);
+        done(`${err.message}`);
       }
     },
   ),
@@ -34,8 +34,9 @@ passport.use(
         const user = await User.findOne({ where: { uuid: jwtPayload.uuid } });
 
         if (user) {
-          done(false, null);
+          return done(null, user);
         }
+        return done("User doesn't exist");
       } catch (err) {
         done(err);
       }
